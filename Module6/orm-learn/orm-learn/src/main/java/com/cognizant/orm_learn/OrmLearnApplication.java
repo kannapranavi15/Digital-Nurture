@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Page;
 
 import com.cognizant.orm_learn.model.Country;
 import com.cognizant.orm_learn.model.Department;
@@ -32,6 +33,7 @@ public class OrmLearnApplication {
     private static DepartmentService departmentService;
     private static SkillService skillService;
 
+
     public static void main(String[] args) {
 
         ApplicationContext context =
@@ -42,6 +44,11 @@ public class OrmLearnApplication {
         employeeService = context.getBean(EmployeeService.class);
         departmentService = context.getBean(DepartmentService.class);
         skillService = context.getBean(SkillService.class);
+        employeeService = context.getBean(EmployeeService.class);
+
+        //testGetAllPermanentEmployees();
+        testGetAllEmployees();
+        testDeleteEmployee();
         
         //testDeleteCountry();
         //testGetFacebookStocks();
@@ -52,6 +59,13 @@ public class OrmLearnApplication {
         //testAddEmployee();
         //testUpdateEmployee();
         //testGetEmployeeWithSkills();
+        testFindEmployeeByName();
+        testPermanentEmployees();
+        testSorting();
+        testPagination();
+        testCount();
+        testExists();
+
         try {
             testFindCountry();
         } catch (CountryNotFoundException e) {
@@ -222,6 +236,87 @@ private static void testGetEmployeeWithSkills() {
 
     LOGGER.info("End");
 }
+
+private static void testGetAllPermanentEmployees() {
+
+    LOGGER.info("Start");
+
+    List<Employee> employees = employeeService.getAllPermanentEmployees();
+
+    LOGGER.debug("Permanent Employees : {}", employees);
+
+    employees.forEach(employee ->
+            LOGGER.debug("Skills : {}", employee.getSkills()));
+
+    LOGGER.info("End");
+}
+
+private static void testGetAllEmployees() {
+
+    LOGGER.info("Start");
+
+    List<Employee> employees = employeeService.getAllEmployees();
+
+    employees.forEach(employee -> {
+        LOGGER.debug("Employee : {}", employee);
+        LOGGER.debug("Skills : {}", employee.getSkills());
+    });
+
+    LOGGER.info("End");
+}
+
+private static void testDeleteEmployee() {
+
+    LOGGER.info("Start");
+
+    employeeService.deleteEmployee(4);   // use an existing employee id
+
+    LOGGER.info("Employee Deleted Successfully");
+
+    LOGGER.info("End");
+}
+
+private static void testFindEmployeeByName() {
+
+    LOGGER.info("Start");
+
+    List<Employee> employees =
+            employeeService.findByEmployeeName("John");
+
+    employees.forEach(System.out::println);
+
+    LOGGER.info("End");
+}
+
+private static void testPermanentEmployees() {
+
+    LOGGER.info("Start");
+
+    List<Employee> employees =
+            employeeService.getPermanentEmployees();
+
+    employees.forEach(System.out::println);
+
+    LOGGER.info("End");
+}
+
+private static void testSorting() {
+    employeeService.getEmployeesSorted().forEach(System.out::println);
+}
+
+private static void testPagination() {
+    Page<Employee> page = employeeService.getEmployees(0);
+    page.getContent().forEach(System.out::println);
+}
+
+private static void testCount() {
+    System.out.println(employeeService.getEmployeeCount());
+}
+
+private static void testExists() {
+    System.out.println(employeeService.employeeExists(1));
+}
+
 
 
 
